@@ -1,0 +1,6 @@
+.tester:hover {
+    background: linear-gradient(to bottom, #f8fafc, #d1e7ff); /* Hover gradient */
+    box-shadow: inset 0px 10px 25px rgba(0, 0, 0, 0.25); /* Stronger inner shadow on hover */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+  }
+  

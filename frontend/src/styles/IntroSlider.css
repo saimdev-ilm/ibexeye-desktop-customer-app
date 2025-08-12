@@ -1,0 +1,44 @@
+
+.custom_relative_into{
+  position: relative !important;
+}
+.custom_relative_into2{
+  position: absolute !important;
+  top: 10px !important;
+  right: 50px;
+}
+
+
+.custom_relative_into2 .custom-swiper-prev-2,
+.custom_relative_into2 .custom-swiper-next-2 {
+  position: absolute;
+  top: 5px !important; 
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s !important;
+}
+
+.custom-swiper-prev-2 {
+  left: 5px !important;
+}
+
+.custom-swiper-next-2 {
+  right: 5px !important; 
+}
+
+.custom-swiper-prev-2:hover,
+.custom-swiper-next-2:hover {
+  background: #1b3c55 !important;
+}
+
+.custom-swiper-prev-2 i,
+.custom-swiper-next-2 i {
+  font-size: 14px !important;
+  color: #1b3c55  !important;
+}

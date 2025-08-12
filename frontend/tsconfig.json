@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "typeRoots": [
+      "./node_modules/@types", // Standard location for @types packages
+      "./src" // Custom types location
+    ],
+    "types": [] // You can specify any additional types here if needed
+  }
+}

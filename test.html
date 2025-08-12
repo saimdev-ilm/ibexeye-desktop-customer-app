@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJI Drone Live Stream</title>
+  <style>
+    body {
+      margin: 0;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00a8ff;
+    }
+    
+    .video-container {
+      position: relative;
+      background: #000;
+      border: 3px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+    
+    canvas {
+      display: block;
+      width: 100%;
+      background-color: #000;
+    }
+    
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background: rgba(0, 0, 0, 0.8);
+      border-top: 1px solid #333;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+    }
+    
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background-color: red;
+      box-shadow: 0 0 5px red;
+    }
+    
+    .status-dot.connected {
+      background-color: #00ff00;
+      box-shadow: 0 0 5px #00ff00;
+    }
+    
+    .status-dot.connecting {
+      background-color: #ffbf00;
+      box-shadow: 0 0 5px #ffbf00;
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      background: #00a8ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    
+    button:hover {
+      background: #0088cc;
+    }
+    
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    
+    .stats {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+      padding: 10px 15px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    
+    .stats-label {
+      color: #aaa;
+    }
+    
+    .error-message {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff0000;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      max-width: 800px;
+      display: none;
+    }
+    
+    .connection-form {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .form-row label {
+      width: 120px;
+      margin-right: 10px;
+    }
+    
+    .form-row input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 3px;
+      border: 1px solid #555;
+      background: #333;
+      color: white;
+    }
+    
+    /* Overlay for no signal */
+    .no-signal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.8);
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      z-index: 10;
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DJI Drone Live Stream</h1>
+    
+    <div class="error-message" id="errorMessage"></div>
+    
+    <div class="connection-form">
+      <div class="form-row">
+        <label for="serverAddress">Server Address:</label>
+        <input type="text" id="serverAddress" value="192.168.18.55:8765" placeholder="hostname:port">
+      </div>
+      <div class="controls">
+        <button id="connectBtn">Connect</button>
+        <button id="disconnectBtn" disabled>Disconnect</button>
+      </div>
+    </div>
+    
+    <div class="video-container">
+      <canvas id="videoCanvas"></canvas>
+      <div class="no-signal" id="noSignal">
+        No Signal
+      </div>
+      <div class="status-bar">
+        <div class="status-indicator">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Disconnected</span>
+        </div>
+        <div id="fpsCounter">0 FPS</div>
+      </div>
+    </div>
+    
+    <div class="stats">
+      <div class="stats-row">
+        <span class="stats-label">Connection:</span>
+        <span id="connectionState">Not connected</span>
+      </div>
+      <div class="stats-row">
+        <span class="stats-label">Frames Received:</span>
+        <span id="framesReceived">0</span>
+      </div>
+      <div class="stats-row">
+        <span class="stats-label">Resolution:</span>
+        <span id="resolution">-</span>
+      </div>
+      <div class="stats-row">
+        <span class="stats-label">Frame Size:</span>
+        <span id="frameSize">0 KB</span>
+      </div>
+      <div class="stats-row">
+        <span class="stats-label">Data Rate:</span>
+        <span id="dataRate">0 KB/s</span>
+      </div>
+      <div class="stats-row">
+        <span class="stats-label">Latency:</span>
+        <span id="latency">0 ms</span>
+      </div>
+    </div>
+  </div>
+ 
+  <script>
+    // DOM Elements
+    const videoCanvas = document.getElementById('videoCanvas');
+    const ctx = videoCanvas.getContext('2d');
+    const noSignalElement = document.getElementById('noSignal');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const fpsCounter = document.getElementById('fpsCounter');
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const serverAddressInput = document.getElementById('serverAddress');
+    const errorMessageElement = document.getElementById('errorMessage');
+    const framesReceivedElement = document.getElementById('framesReceived');
+    const resolutionElement = document.getElementById('resolution');
+    const frameSizeElement = document.getElementById('frameSize');
+    const dataRateElement = document.getElementById('dataRate');
+    const latencyElement = document.getElementById('latency');
+    const connectionStateElement = document.getElementById('connectionState');
+    
+    // Canvas setup
+    const idealWidth = 640;
+    const idealHeight = 480;
+    videoCanvas.width = idealWidth;
+    videoCanvas.height = idealHeight;
+    
+    // Performance variables
+    let socket = null;
+    let connected = false;
+    let connecting = false;
+    let framesReceived = 0;
+    let lastFrameTime = 0;
+    let fpsArray = [];
+    let totalBytes = 0;
+    let bytesLastSecond = 0;
+    let lastBytesResetTime = performance.now();
+    let lastFrameRenderTime = 0;
+    let latencyValues = [];
+    let reconnectTimeout = null;
+    let reconnectAttempts = 0;
+    let imageCache = new Map(); // URL object cache for better memory management
+    
+    // Initialize
+    function init() {
+      // Set initial state
+      updateConnectionStatus('disconnected');
+      drawNoSignal();
+      
+      // Try to load last used server from localStorage
+      const savedServer = localStorage.getItem('djiServerAddress');
+      if (savedServer) {
+        serverAddressInput.value = savedServer;
+      }
+      
+      // Start statistics update interval
+      setInterval(updateStats, 1000);
+      
+      // Set up event listeners
+      connectBtn.addEventListener('click', connect);
+      disconnectBtn.addEventListener('click', disconnect);
+      
+      // Handle page unload
+      window.addEventListener('beforeunload', () => {
+        if (socket) {
+          socket.close();
+        }
+      });
+    }
+    
+    // Update connection status UI
+    function updateConnectionStatus(status, message) {
+      // Reset all states
+      statusDot.classList.remove('connected', 'connecting');
+      connecting = false;
+      connected = false;
+      
+      switch (status) {
+        case 'connected':
+          statusDot.classList.add('connected');
+          statusText.textContent = 'Connected';
+          connectionStateElement.textContent = 'Connected';
+          noSignalElement.style.display = 'none';
+          connectBtn.disabled = true;
+          disconnectBtn.disabled = false;
+          connected = true;
+          break;
+          
+        case 'connecting':
+          statusDot.classList.add('connecting');
+          statusText.textContent = 'Connecting...';
+          connectionStateElement.textContent = 'Connecting...';
+          noSignalElement.style.display = 'flex';
+          noSignalElement.innerHTML = 'Connecting <div class="spinner"></div>';
+          connectBtn.disabled = true;
+          disconnectBtn.disabled = false;
+          connecting = true;
+          break;
+          
+        case 'error':
+          statusDot.classList.remove('connected', 'connecting');
+          statusText.textContent = 'Error';
+          connectionStateElement.textContent = 'Connection Error';
+          showError(message || 'Connection error');
+          connectBtn.disabled = false;
+          disconnectBtn.disabled = true;
+          noSignalElement.style.display = 'flex';
+          noSignalElement.textContent = 'Connection Error';
+          break;
+          
+        case 'disconnected':
+        default:
+          statusText.textContent = 'Disconnected';
+          connectionStateElement.textContent = 'Disconnected';
+          connectBtn.disabled = false;
+          disconnectBtn.disabled = true;
+          noSignalElement.style.display = 'flex';
+          noSignalElement.textContent = 'No Signal';
+          drawNoSignal();
+          break;
+      }
+    }
+    
+    // Show error message
+    function showError(message) {
+      errorMessageElement.textContent = message;
+      errorMessageElement.style.display = 'block';
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        errorMessageElement.style.display = 'none';
+      }, 5000);
+    }
+    
+    // Draw "No Signal" pattern
+    function drawNoSignal() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
+      
+      // Draw static noise
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      for (let i = 0; i < 5000; i++) {
+        const x = Math.random() * videoCanvas.width;
+        const y = Math.random() * videoCanvas.height;
+        const size = Math.random() * 2 + 1;
+        ctx.fillRect(x, y, size, size);
+      }
+      
+      // Draw "NO SIGNAL" text
+      ctx.font = 'bold 48px Arial';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('NO SIGNAL', videoCanvas.width / 2, videoCanvas.height / 2);
+    }
+    
+    // Connect to WebSocket server
+    function connect() {
+      if (connected || connecting) return;
+      
+      // Clear any existing reconnect timeout
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+      }
+      
+      // Get server address
+      let serverAddress = serverAddressInput.value.trim();
+      
+      // Add ws:// prefix if not present
+      if (!serverAddress.startsWith('ws://') && !serverAddress.startsWith('wss://')) {
+        serverAddress = 'ws://' + serverAddress;
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('djiServerAddress', serverAddressInput.value.trim());
+      
+      updateConnectionStatus('connecting');
+      
+      try {
+        // Close existing socket if any
+        if (socket) {
+          socket.close();
+        }
+        
+        // Create WebSocket connection
+        socket = new WebSocket(serverAddress);
+        socket.binaryType = 'arraybuffer';
+        
+        // Set connection timeout
+        const connectionTimeout = setTimeout(() => {
+          if (!connected) {
+            socket.close();
+            updateConnectionStatus('error', 'Connection timeout');
+            scheduleReconnect();
+          }
+        }, 5000);
+        
+        // Handle connection open
+        socket.onopen = function() {
+          clearTimeout(connectionTimeout);
+          updateConnectionStatus('connected');
+          reconnectAttempts = 0;
+          console.log('WebSocket connected');
+        };
+        
+        // Handle messages (frames)
+        socket.onmessage = function(event) {
+          const receiveTime = performance.now();
+          
+          // Check if data is a string message (likely a control message)
+          if (typeof event.data === 'string') {
+            try {
+              const message = JSON.parse(event.data);
+              console.log('Received message:', message);
+              return;
+            } catch (e) {
+              console.error('Invalid JSON message:', event.data);
+              return;
+            }
+          }
+          
+          // Process binary frame data
+          processFrame(event.data, receiveTime);
+        };
+        
+        // Handle errors
+        socket.onerror = function(err) {
+          clearTimeout(connectionTimeout);
+          console.error('WebSocket error:', err);
+          updateConnectionStatus('error', 'Connection failed');
+          scheduleReconnect();
+        };
+        
+        // Handle close
+        socket.onclose = function() {
+          clearTimeout(connectionTimeout);
+          if (connected) {
+            console.log('WebSocket closed');
+            updateConnectionStatus('disconnected');
+            scheduleReconnect();
+          }
+        };
+      } catch (err) {
+        console.error('Error creating WebSocket:', err);
+        updateConnectionStatus('error', err.message);
+        scheduleReconnect();
+      }
+    }
+    
+    // Process an incoming video frame
+    function processFrame(data, receiveTime) {
+      framesReceived++;
+      
+      // Update data rate stats
+      const frameSize = data.byteLength;
+      totalBytes += frameSize;
+      bytesLastSecond += frameSize;
+      
+      // Create blob and image
+      try {
+        const blob = new Blob([data], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        
+        // Clean up old image cache entries if we have too many
+        if (imageCache.size > 5) {
+          const oldestUrl = imageCache.keys().next().value;
+          URL.revokeObjectURL(oldestUrl);
+          imageCache.delete(oldestUrl);
+        }
+        
+        const img = new Image();
+        imageCache.set(url, img);
+        
+        // Handle image load
+        img.onload = function() {
+          // Get render time for latency calculation
+          const renderTime = performance.now();
+          const frameDuration = renderTime - receiveTime;
+          
+          // Update latency stats (time from receiving the frame to rendering it)
+          latencyValues.push(frameDuration);
+          if (latencyValues.length > 30) {
+            latencyValues.shift();
+          }
+          
+          // Update last render time for FPS calculation
+          if (lastFrameRenderTime) {
+            const fps = 1000 / (renderTime - lastFrameRenderTime);
+            fpsArray.push(fps);
+            if (fpsArray.length > 30) {
+              fpsArray.shift();
+            }
+          }
+          lastFrameRenderTime = renderTime;
+          
+          // Update resolution display
+          if (resolutionElement.textContent === '-') {
+            resolutionElement.textContent = `${img.width} × ${img.height}`;
+            
+            // Adjust canvas size if needed
+            if (img.width !== videoCanvas.width || img.height !== videoCanvas.height) {
+              videoCanvas.width = img.width;
+              videoCanvas.height = img.height;
+            }
+          }
+          
+          // Draw image on canvas
+          ctx.drawImage(img, 0, 0, videoCanvas.width, videoCanvas.height);
+          
+          // Clean up blob URL
+          URL.revokeObjectURL(url);
+          imageCache.delete(url);
+        };
+        
+        // Handle image error
+        img.onerror = function() {
+          console.error('Error loading image from blob');
+          URL.revokeObjectURL(url);
+          imageCache.delete(url);
+        };
+        
+        // Set image source to start loading
+        img.src = url;
+        
+      } catch (e) {
+        console.error('Error processing frame:', e);
+      }
+    }
+    
+    // Disconnect from WebSocket server
+    function disconnect() {
+      if (socket) {
+        socket.close();
+        socket = null;
+      }
+      
+      // Clear any scheduled reconnect
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+      }
+      
+      updateConnectionStatus('disconnected');
+      
+      // Reset statistics
+      framesReceived = 0;
+      lastFrameTime = 0;
+      fpsArray = [];
+      totalBytes = 0;
+      bytesLastSecond = 0;
+      lastBytesResetTime = performance.now();
+      lastFrameRenderTime = 0;
+      latencyValues = [];
+      
+      // Clean up image cache
+      imageCache.forEach((img, url) => {
+        URL.revokeObjectURL(url);
+      });
+      imageCache.clear();
+      
+      // Update UI
+      drawNoSignal();
+      updateStats();
+    }
+    
+    // Schedule reconnect with exponential backoff
+    function scheduleReconnect() {
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      
+      reconnectAttempts++;
+      
+      // Calculate backoff time (max 30 seconds)
+      const backoffTime = Math.min(1000 * Math.pow(1.5, reconnectAttempts - 1), 30000);
+      
+      console.log(`Scheduling reconnect in ${backoffTime}ms (attempt ${reconnectAttempts})`);
+      
+      reconnectTimeout = setTimeout(() => {
+        if (!connected && !connecting) {
+          console.log(`Attempting to reconnect (${reconnectAttempts})`);
+          connect();
+        }
+      }, backoffTime);
+    }
+    
+    // Update statistics display
+    function updateStats() {
+      // Calculate and display FPS
+      if (fpsArray.length > 0) {
+        const avgFps = fpsArray.reduce((sum, fps) => sum + fps, 0) / fpsArray.length;
+        fpsCounter.textContent = `${avgFps.toFixed(1)} FPS`;
+      } else {
+        fpsCounter.textContent = '0 FPS';
+      }
+      
+      // Update frames received
+      framesReceivedElement.textContent = framesReceived;
+      
+      // Calculate and display data rate
+      const now = performance.now();
+      const timeSinceLastReset = (now - lastBytesResetTime) / 1000; // in seconds
+      
+      if (timeSinceLastReset >= 1) {
+        const kbps = (bytesLastSecond / timeSinceLastReset) / 1024;
+        dataRateElement.textContent = `${kbps.toFixed(1)} KB/s`;
+        
+        bytesLastSecond = 0;
+        lastBytesResetTime = now;
+      }
+      
+      // Update frame size
+      const lastFrameSize = bytesLastSecond > 0 ? bytesLastSecond / framesReceived : 0;
+      frameSizeElement.textContent = `${(lastFrameSize / 1024).toFixed(1)} KB`;
+      
+      // Update latency
+      if (latencyValues.length > 0) {
+        const avgLatency = latencyValues.reduce((sum, val) => sum + val, 0) / latencyValues.length;
+        latencyElement.textContent = `${avgLatency.toFixed(1)} ms`;
+      } else {
+        latencyElement.textContent = '0 ms';
+      }
+    }
+    
+    // Initialize the app
+    init();
+  </script>
+</body>
+</html>

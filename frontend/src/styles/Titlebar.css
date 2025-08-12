@@ -1,0 +1,71 @@
+
+.custom-title-bar{
+  -webkit-app-region: drag; 
+}
+.nav-bar span, .Custom_title, .main-menu{
+  -webkit-app-region: no-drag; /* Ensure buttons are not part of the draggable area */
+}
+.nav-bar span, .Custom_title{
+  -webkit-app-region: no-drag; /* Ensure buttons are not part of the draggable area */
+}
+
+.custom-title-bar2 {
+  -webkit-app-region: drag; 
+}
+
+.window-controls {
+  -webkit-app-region: no-drag; /* Ensure buttons are not part of the draggable area */
+}
+
+.minimize-btn,
+.maximize-btn,
+.close-btn {
+  -webkit-app-region: no-drag; /* Ensure buttons are not part of the draggable area */
+}
+
+
+
+.custom-title-bar {
+  padding: 5px 10px;
+}
+
+.title-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+}
+
+.window-controls button {
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.window-controls .minimize-btn:hover {
+  color: #4a90e2;
+}
+
+.window-controls .maximize-btn:hover {
+  color: #4a90e2;
+}
+
+.window-controls .close-btn:hover {
+  color: #b22222;
+}
+
+.bg_red {
+  background: #b22222 !important;
+}
+
+.bg_darkpurple {
+  background: #1976d2 !important;
+}
+

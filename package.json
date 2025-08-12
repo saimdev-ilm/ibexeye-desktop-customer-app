@@ -1,0 +1,87 @@
+{
+  "name": "ibexeye",
+  "version": "1.0.0",
+  "description": "IbexEye Application - Electron and React Integration",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "concurrently \"npm run dev-frontend\" \"cross-env NODE_ENV=development electron .\"",
+    "dev-frontend": "npm run dev --prefix frontend",
+    "build": "cd frontend && npm run build && cd .. && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/spark-md5": "^3.0.4",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^32.0.1",
+    "electron-builder": "^24.13.3",
+    "vite": "^5.4.2"
+  },
+  "dependencies": {
+    "@types/react": "^19.1.2",
+    "axios": "^1.7.7",
+    "bootstrap": "^5.3.5",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "lucide-react": "^0.507.0",
+    "portfinder": "^1.0.32",
+    "react": "^19.1.0",
+    "react-bootstrap": "^2.10.9",
+    "react-hot-toast": "^2.5.2",
+    "react-leaflet": "^4.2.1",
+    "react-loading-skeleton": "^3.5.0",
+    "react-modal": "^3.16.1",
+    "socket.io-client": "^4.8.1",
+    "spark-md5": "^3.0.2"
+  },
+  "build": {
+    "asar": true,
+    "files": [
+      "frontend/dist/**/*",
+      "frontend/src/assets/**/*",
+      "main.js",
+      "preload.js",
+      "splash-preload.js",
+      "splash.html",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist_electron"
+    },
+    "extraResources": [
+      {
+        "from": "node_modules/electron/dist/resources",
+        "to": "resources",
+        "filter": [
+          "chrome_100_percent.pak",
+          "chrome_200_percent.pak",
+          "*.bin"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "frontend/src/assets/logo/iconlogo.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "IbexEye"
+    }
+  },
+  "icon": "frontend/src/assets/logo/iconlogo.ico"
+}

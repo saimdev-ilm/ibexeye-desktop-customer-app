@@ -1,0 +1,32 @@
+.cus_tab_container::-webkit-scrollbar {
+  height: 3px;
+  border: 1px solid #1976d2 !important;
+  width: 8px;
+}
+
+.cus_tab_container::-webkit-scrollbar-thumb {
+  background: #1976d2 !important;
+  border-radius: 20px;
+}
+
+.cus_tab_container::-webkit-scrollbar-thumb:hover {
+    background: #1976d2 !important; /* Darker color when hovered */
+  }
+  
+
+  
+.swiper-pagination {
+  @apply absolute top-0 left-0 right-0 flex justify-center space-x-2 ; /* Center and position at the top */
+}
+
+.swiper-pagination-bullet {
+  @apply w-3 h-3 bg-gray-500 rounded-full; /* Default bullet style */
+}
+
+.swiper-pagination-bullet-active {
+  @apply bg-[#1B3C55]; /* Active bullet color */
+}
+
+.leaflet-container{
+  z-index: 10 !important;
+}

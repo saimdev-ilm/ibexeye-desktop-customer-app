@@ -1,0 +1,77 @@
+.addonsSlider .custom_relative {
+  cursor: pointer;
+  position: relative;
+  background: transparent !important;
+  overflow: visible;
+}
+
+.addonsSlider .custom_relative2 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  overflow: visible;
+}
+
+.addonsSlider .custom-pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+}
+
+.addonsSlider .custom-swiper-prev-1,
+.addonsSlider .custom-swiper-next-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #1b3c55 !important;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.addonsSlider .custom-swiper-prev-1:hover,
+.addonsSlider .custom-swiper-next-1:hover {
+  border: 1px solid #1b3c55 !important;
+}
+
+.addonsSlider .custom-swiper-prev-1 i,
+.addonsSlider .custom-swiper-next-1 i {
+  font-size: 18px;
+  color: #1b3c55 !important;
+}
+
+.addonsSlider .custom-swiper-pagination {
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex;
+  width: 40%;
+}
+
+
+/* Ensure text is limited to two lines with ellipsis */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure titles always appear in two lines with ellipsis if needed */
+.two-line-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
