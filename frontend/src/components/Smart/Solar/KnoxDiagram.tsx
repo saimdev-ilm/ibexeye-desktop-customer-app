@@ -149,7 +149,7 @@ const KnoxDiagram = () => {
   return (
     <div className="relative w-full overflow-hidden h-96 rounded-xl">
       {/* Connection Status Indicator */}
-    <div className="absolute z-20 top-2 right-2">
+      <div className="absolute z-20 top-2 right-2">
         <div className={`flex items-center gap-2 px-3 py-1 border rounded-full ${isConnected && wsConnected
           ? 'border-green-200 bg-green-50'
           : 'border-red-200 bg-red-50'
@@ -224,7 +224,7 @@ const KnoxDiagram = () => {
             <div className="text-xs font-bold text-center text-gray-800">
               {Math.abs(solarData.batteryPower)} W
               <span className="ml-1 text-gray-600">({solarData.batterySoc})</span>
-              
+
             </div>
             <div className="mt-1 text-xs font-semibold text-center text-gray-700">BATTERY</div>
             <div className={`mt-1 px-2 py-0.5 text-xs font-medium rounded-full ${statuses.batteryStatus.bg} ${statuses.batteryStatus.color}`}>
@@ -243,7 +243,7 @@ const KnoxDiagram = () => {
           <div className="mt-1 text-xs font-semibold text-center text-gray-700">LOAD</div>
           <div className="text-xs font-bold text-center text-gray-800">
             {solarData.loadPower} W
-           
+
           </div>
           <div className={`mt-1 px-2 py-0.5 text-xs font-medium rounded-full ${statuses.loadStatus.bg} ${statuses.loadStatus.color}`}>
             {statuses.loadStatus.text}
@@ -255,7 +255,7 @@ const KnoxDiagram = () => {
       <svg className="absolute inset-0 w-full h-full" strokeWidth="2">
         {/* Grid to/from Inverter */}
         <line
-          x1="80%"
+          x1="87%"
           y1="49%"
           x2="49%"
           y2="49%"
@@ -427,7 +427,7 @@ const KnoxDiagram = () => {
         <line
           x1="49%"
           y1="49%"
-          x2="22%"
+          x2="15%"
           y2="49%"
           className={flowStatus.inverterToHome ? "stroke-orange-500" : "stroke-gray-300"}
           strokeDasharray={flowStatus.inverterToHome ? "4 2" : "none"}

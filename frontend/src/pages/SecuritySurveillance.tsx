@@ -1,5 +1,5 @@
 // Updated SecuritySurveillance.tsx with Mode-Zone-Camera hierarchy
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SolarDashboardCards from "../components/Smart/Solar/SolarDashboardCards";
 import { useNavigate } from "react-router-dom";
 import KnoxSolarDashboard from "../components/Smart/Solar/KnoxSolarDashboard";
@@ -12,20 +12,21 @@ import SolarIcon from "../assets/solar-panel.png";
 import ModesIcon from "../assets/dark-mode.png";
 import CameraIcon from "../assets/round-cctv.png";
 import UsersIcon from "../assets/users-alt.png";
-import DroneIcon from "../assets/drone.png";
+// import DroneIcon from "../assets/drone.png";
 import ROIIcon from "../assets/location-crosshairs.png";
 import RecordingIcon from "../assets/video-recording.png";
 import { FiLogOut } from "react-icons/fi";
 import Blue from '../assets/White.png'
+import SolarRecentAlerts from "../components/Smart/SolarRecentAlerts";
 
 const SecuritySurveillance: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded,] = useState(false);
   const navigate = useNavigate();
 
   const handleAllCameraDashboard = () => navigate("/allCameraDashboard");
   const handleModesManagement = () => navigate("/modesManagemenet");
   const handleAllSolarDashboard = () => navigate("/allSolarDashboard");
-  const handleDroneDashboard = () => navigate("/droneManagement");
+  // const handleDroneDashboard = () => navigate("/droneManagement");
   const handleAllRecordings = () => navigate("/AllRecordings");
   const handleROIManager = () => navigate("/rOIManager");
   const handleUsersManagement = () => navigate("/usersManagement");
@@ -53,9 +54,9 @@ const SecuritySurveillance: React.FC = () => {
                 <button title="Camera Dashboard" onClick={handleAllCameraDashboard} className="p-3 transition-colors rounded-lg bg-white/10 hover:bg-white/20">
                   <img src={CameraIcon} alt="Camera" style={{ width: '1.2vw' }} />
                 </button>
-                <button title="Drone Dashboard" onClick={handleDroneDashboard} className="p-3 transition-colors rounded-lg bg-white/10 hover:bg-white/20">
+                {/* <button title="Drone Dashboard" onClick={handleDroneDashboard} className="p-3 transition-colors rounded-lg bg-white/10 hover:bg-white/20">
                   <img src={DroneIcon} alt="Drone" style={{ width: '1.2vw' }} />
-                </button>
+                </button> */}
                 <button title="Sensors Dashboard" onClick={handleSensorsManagement} className="p-3 transition-colors rounded-lg bg-white/10 hover:bg-white/20">
                   <img src={SensorIcon} alt="Sensors" style={{ width: '1.2vw' }} />
                 </button>
@@ -101,11 +102,14 @@ const SecuritySurveillance: React.FC = () => {
           <div className="flex flex-col gap-4">
             {/* Solar Dashboard Section */}
             <div className="flex gap-4">
-              <div className="w-1/2 bg-white rounded-2xl shadow-3xl">
+              {/* <div className="w-1/2 bg-white rounded-2xl shadow-3xl">
                 <SolarDashboardCards />
-              </div>
-              <div className="w-1/2 bg-white rounded-2xl shadow-3xl">
+              </div> */}
+              <div className="w-3/4 bg-white rounded-2xl shadow-3xl">
                 <KnoxSolarDashboard />
+              </div>
+              <div className="w-1/4 transition-all duration-300">
+                <SolarRecentAlerts />
               </div>
             </div>
 
