@@ -1,6 +1,6 @@
 // Updated SecuritySurveillance.tsx with Mode-Zone-Camera hierarchy
 import React, { useState } from "react";
-import SolarDashboardCards from "../components/Smart/Solar/SolarDashboardCards";
+// import SolarDashboardCards from "../components/Smart/Solar/SolarDashboardCards";
 import { useNavigate } from "react-router-dom";
 import KnoxSolarDashboard from "../components/Smart/Solar/KnoxSolarDashboard";
 import RecentAlerts from "../components/Smart/RecentAlerts";
